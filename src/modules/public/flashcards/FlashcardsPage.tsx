@@ -10,6 +10,7 @@ import { GridView } from './components/GridView'
 import { useFlashcardStore } from './stores/useFlashcardStore'
 import { useSpeech } from './hooks/useSpeech'
 import { vocabData } from './data/vocabData'
+import { AppHeader } from '~/components/header/AppHeader'
 import './FlashcardsPage.scss'
 
 export function FlashcardsPage() {
@@ -61,6 +62,8 @@ export function FlashcardsPage() {
 
   return (
     <div className="fc-container">
+      <AppHeader />
+
       <Header />
       <ModeTabs />
 

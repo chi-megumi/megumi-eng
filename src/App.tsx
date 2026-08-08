@@ -1,7 +1,11 @@
-import { FlashcardsPage } from './modules/public/flashcards/FlashcardsPage';
+import { FlashcardsPage } from './modules/public/flashcards/FlashcardsPage'
 
 function App() {
-  return <FlashcardsPage />;
+  return (
+    <>
+      <FlashcardsPage />
+    </>
+  )
 }
 
-export default App;
+export default App
