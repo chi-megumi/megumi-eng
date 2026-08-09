@@ -2,6 +2,7 @@ import { useFlashcardStore, useFilteredIndices } from '../stores/useFlashcardSto
 import { vocabData } from '../data/vocabData'
 import { useConfetti } from '../hooks/useConfetti'
 import { playSound } from '../utils/sound'
+import { Button } from '../../../../components/button/Button'
 
 export function FlashcardControls() {
   const currentIndex = useFlashcardStore((s) => s.currentIndex)
@@ -39,16 +40,17 @@ export function FlashcardControls() {
   return (
     <>
       <div className="bottom-controls">
-        <button
-          className="nav-btn"
+        <Button
+          variant="ghost"
+          size="md"
           id="prev-btn"
           onClick={prevCard}
           disabled={currentFiltered <= 0}
         >
           <span>⬅️</span> Trước
-        </button>
+        </Button>
 
-        {/* <Button variant="primary" size="md" onClick={flipCard} disabled={isEmptyCards}>
+        <Button variant="primary" size="md" onClick={flipCard} disabled={isEmptyCards}>
           <span>🔄</span> Lật Thẻ (Space)
         </Button>
 
@@ -60,16 +62,17 @@ export function FlashcardControls() {
         >
           <span>{isMastered ? '↩️' : '✅'}</span>
           <span>{isMastered ? 'Bỏ đánh dấu' : 'Đánh dấu đã thuộc'}</span>
-        </Button> */}
+        </Button>
 
-        <button
-          className="nav-btn"
+        <Button
+          variant="ghost"
+          size="md"
           id="next-btn"
           onClick={nextCard}
           disabled={currentFiltered >= filtered.length - 1}
         >
           Tiếp <span>➡️</span>
-        </button>
+        </Button>
       </div>
 
       <div className="card-counter">

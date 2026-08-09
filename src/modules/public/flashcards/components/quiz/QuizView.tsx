@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
-import { useQuizStore } from '../stores/useQuizStore'
-import { vocabData } from '../data/vocabData'
-import { useConfetti } from '../hooks/useConfetti'
-import { useSpeech } from '../hooks/useSpeech'
-import { playSound } from '../utils/sound'
-import type { QuizHistoryEntry } from '../stores/useQuizStore'
+import { useQuizStore } from '../../stores/useQuizStore'
+import { vocabData } from '../../data/vocabData'
+import { useConfetti } from '../../hooks/useConfetti'
+import { useSpeech } from '../../hooks/useSpeech'
+import { playSound } from '../../utils/sound'
+import type { QuizHistoryEntry } from '../../stores/useQuizStore'
 import HistoryDetailModal from '~/modules/public/flashcards/components/quiz/HistoryDetailModal'
 import ModeSelector from '~/modules/public/flashcards/components/quiz/ModeSelector'
 import HistoryPanel from '~/modules/public/flashcards/components/quiz/HistoryPanel'
-import ScoredSummary from '~/modules/public/flashcards/components/quiz/ScoredSummary'
+import ScoredSummary from '~/modules/public/flashcards/components/quiz/ScoreSummary'
 
 export function QuizView() {
   const quizMode = useQuizStore((s) => s.quizMode)
@@ -70,14 +70,22 @@ export function QuizView() {
 
   return (
     <>
-      {/* History detail modal — open prop driven by entry !== null */}
-      <HistoryDetailModal entry={modalEntry} onClose={() => setModalEntry(null)} />
+      {/* History detail modal */}
+      {modalEntry && <HistoryDetailModal entry={modalEntry} onClose={() => setModalEntry(null)} />}
 
       <div className="quiz-view">
         {/* Header */}
         <div className="quiz-header">
           <ModeSelector />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              flex: 1,
+              justifyContent: 'flex-end',
+            }}
+          >
             {quizMode === 'endless' && (
               <div style={{ fontWeight: 700, color: '#f59e0b' }}>🔥 {streak}</div>
             )}

@@ -28,7 +28,7 @@ function HistoryPanel({ onOpen }: { onOpen: (entry: QuizHistoryEntry) => void })
           >
             <div className="quiz-history-score" style={{ color: scoreColor(entry.score) }}>
               {entry.score}
-              <span style={{ fontSize: '0.8rem', fontWeight: 500, color: '#94a3b8' }}>/10</span>
+              <span style={{ fontSize: '0.8rem', fontWeight: 500, color: '#94a3b8' }}>/100</span>
             </div>
             <div className="quiz-history-meta">
               <span>

@@ -16,11 +16,12 @@
 }
 
 .app-header__inner {
-  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 24px;
-  height: 64px;
+  padding: 8px 24px;
+  min-height: 64px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;

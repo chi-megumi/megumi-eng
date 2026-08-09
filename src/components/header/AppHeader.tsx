@@ -1,4 +1,4 @@
-// import { Button } from '../../components/button/Button'
+import { Button } from '../../components/button/Button'
 import './AppHeader.scss'
 
 const AppHeader = () => {
@@ -21,13 +21,13 @@ const AppHeader = () => {
         {/* CTA */}
         <div className="app-header__cta">
           <div className="app-header__actions">
-            {/* <Button variant="primary" size="sm" onClick={onLogin}>
+            <Button variant="primary" size="sm" onClick={onLogin}>
               Đăng nhập
             </Button>
 
             <Button variant="secondary" size="sm" onClick={onRegister}>
               Đăng ký
-            </Button> */}
+            </Button>
           </div>
         </div>
       </div>

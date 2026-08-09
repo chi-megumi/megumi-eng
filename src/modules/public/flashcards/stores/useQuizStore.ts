@@ -257,7 +257,7 @@ export const useQuizStore = create<QuizState>()(
 
         if (scoredDone) {
           const durationMs = Date.now() - state.sessionStartMs
-          const score = Math.round((newCorrect / state.sessionTotal) * 10)
+          const score = Math.round((newCorrect / state.sessionTotal) * 100)
           const entry: QuizHistoryEntry = {
             id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
             date: new Date().toISOString(),

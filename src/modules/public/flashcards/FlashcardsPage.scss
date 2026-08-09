@@ -581,6 +581,8 @@ h1 span.highlight {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 /* Mode tabs */
