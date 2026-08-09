@@ -1,6 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import './Button.scss'
-
+import '~/common/styles/components/Button.scss'
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'icon' | 'danger'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
@@ -21,13 +20,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <button
-      className={[
-        'btn',
-        `btn--${variant}`,
-        `btn--${size}`,
-        fullWidth ? 'btn--full' : '',
-        className,
-      ]
+      className={['btn', `btn--${variant}`, `btn--${size}`, fullWidth ? 'btn--full' : '', className]
         .filter(Boolean)
         .join(' ')}
       {...rest}

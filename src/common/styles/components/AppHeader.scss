@@ -4,7 +4,7 @@
 
 .app-header {
   position: sticky;
-  top: 0;
+  top: 20px;
   z-index: 100;
   width: 100%;
   border-radius: 12px;
@@ -25,6 +25,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+
+  @media screen and (max-width: 767px) {
+    justify-content: center;
+  }
 }
 
 /* ── Brand ── */
