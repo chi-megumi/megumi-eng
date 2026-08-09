@@ -36,7 +36,6 @@ export function FlashcardControls() {
     toggleMastered()
   }
 
-
   return (
     <>
       <div className="bottom-controls">
@@ -49,13 +48,9 @@ export function FlashcardControls() {
           <span>⬅️</span> Trước
         </button>
 
-<<<<<<< Updated upstream
-        <button className="nav-btn flip-btn-main" onClick={flipCard}>
-=======
-        <Button variant="primary" size="md" onClick={flipCard} disabled={isEmptyCards}>
->>>>>>> Stashed changes
+        {/* <Button variant="primary" size="md" onClick={flipCard} disabled={isEmptyCards}>
           <span>🔄</span> Lật Thẻ (Space)
-        </button>
+        </Button>
 
         <Button
           className={`master-toggle-btn ${isMastered ? 'mastered' : ''}`}
@@ -65,7 +60,7 @@ export function FlashcardControls() {
         >
           <span>{isMastered ? '↩️' : '✅'}</span>
           <span>{isMastered ? 'Bỏ đánh dấu' : 'Đánh dấu đã thuộc'}</span>
-        </Button>
+        </Button> */}
 
         <button
           className="nav-btn"

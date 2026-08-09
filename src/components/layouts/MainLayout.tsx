@@ -9,7 +9,7 @@ const MainLayout = () => {
         <SideBar />
       </div> */}
 
-      <div className="w-225 overflow-x-hidden">
+      <div className="w-225 overflow-hidden">
         <AppHeader />
         <Outlet />
       </div>
