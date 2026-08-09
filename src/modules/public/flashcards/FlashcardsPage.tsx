@@ -5,14 +5,14 @@ import { ProgressBar } from './components/ProgressBar'
 import { ControlsBar } from './components/ControlsBar'
 import { Flashcard3D } from './components/Flashcard3D'
 import { FlashcardControls } from './components/FlashcardControls'
-import { QuizView } from './components/QuizView'
+import { QuizView } from './components/quiz/QuizView'
 import { GridView } from './components/GridView'
 import { useFlashcardStore } from './stores/useFlashcardStore'
 import { useSpeech } from './hooks/useSpeech'
 import { vocabData } from './data/vocabData'
 import './FlashcardsPage.scss'
 
-export function FlashcardsPage() {
+const FlashcardsPage = () => {
   const activeMode = useFlashcardStore((s) => s.activeMode)
   const flipCard = useFlashcardStore((s) => s.flipCard)
   const nextCard = useFlashcardStore((s) => s.nextCard)
@@ -46,6 +46,7 @@ export function FlashcardsPage() {
           break
         case 'KeyS':
           e.preventDefault()
+          if (currentIndex === undefined) return
           speak(vocabData[currentIndex]?.word ?? '')
           break
         case 'KeyM':
@@ -81,3 +82,5 @@ export function FlashcardsPage() {
     </div>
   )
 }
+
+export default FlashcardsPage
