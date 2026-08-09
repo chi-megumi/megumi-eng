@@ -46,7 +46,7 @@ const FlashcardsPage = () => {
           break
         case 'KeyS':
           e.preventDefault()
-          if (currentIndex === null) return
+          if (currentIndex === undefined) return
           speak(vocabData[currentIndex]?.word ?? '')
           break
         case 'KeyM':

@@ -1,5 +1,5 @@
 // import SideBar from '~/components/menu/Sidebar'
-import AppHeader from '~/components/header/AppHeader'
+// import AppHeader from '~/components/header/AppHeader'
 import { Outlet } from 'react-router-dom'
 
 const MainLayout = () => {
@@ -10,7 +10,7 @@ const MainLayout = () => {
       </div> */}
 
       <div className="w-225 overflow-hidden">
-        <AppHeader />
+        {/* <AppHeader /> */}
         <Outlet />
       </div>
     </div>
