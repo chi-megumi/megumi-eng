@@ -319,10 +319,16 @@ export function QuizView() {
 
   return (
     <>
+<<<<<<< Updated upstream
       {/* History detail modal */}
       {modalEntry && (
         <HistoryDetailModal entry={modalEntry} onClose={() => setModalEntry(null)} />
       )}
+=======
+      {/* History detail modal — open prop driven by entry !== null */}
+      <HistoryDetailModal entry={modalEntry} onClose={() => setModalEntry(null)} />
+
+>>>>>>> Stashed changes
 
       <div className="quiz-view">
         {/* Header */}

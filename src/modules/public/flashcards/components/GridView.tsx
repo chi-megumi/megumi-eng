@@ -1,9 +1,9 @@
-import { useFlashcardStore } from '../stores/useFlashcardStore'
 import { vocabData } from '../data/vocabData'
 
+
 export function GridView() {
-  const getAllIndices = useFlashcardStore((s) => s.getAllIndices)
-  const filtered = getAllIndices()
+  // Grid always shows all vocab cards regardless of filter
+  const filtered = vocabData.map((_, i) => i)
 
   return (
     <div className="grid-view">

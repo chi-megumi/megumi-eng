@@ -528,10 +528,16 @@ h1 span.highlight {
     background: #e2e8f0;
     color: #475569;
     box-shadow: none;
+
+    &:hover {
+      color: currentColor;
+      color: currentColor !important;
+    }
   }
 
   &:hover {
     transform: translateY(-2px);
+    color: white !important;
   }
 }
 
@@ -859,8 +865,14 @@ button.quiz-history-card {
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .quiz-modal-header {
@@ -921,7 +933,8 @@ button.quiz-history-card {
   gap: 20px;
 }
 
-.quiz-modal-section {}
+.quiz-modal-section {
+}
 
 .quiz-modal-section-title {
   font-family: 'Fredoka', sans-serif;
@@ -1004,7 +1017,6 @@ button.quiz-history-card {
     font-weight: 700;
   }
 }
-
 
 /* ================= GRID / PRINT VIEW ================= */
 .grid-view {

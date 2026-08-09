@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { useShallow } from 'zustand/react/shallow'
 import { vocabData, type Category } from '../data/vocabData'
 import { playSound } from '../utils/sound'
 
@@ -7,17 +8,13 @@ export type FilterType = Category | 'all' | 'starred' | 'memorize'
 export type AppMode = 'flashcard' | 'quiz' | 'grid'
 
 interface FlashcardState {
-  currentIndex: number
+  currentIndex?: number
   isFlipped: boolean
   masteredSet: number[]
   starredSet: number[]
   activeFilter: FilterType
   searchQuery: string
   activeMode: AppMode
-
-  // Derived
-  getFilteredIndices: () => number[]
-  getAllIndices: () => number[]
 
   // Actions
   flipCard: () => void
@@ -31,6 +28,62 @@ interface FlashcardState {
   setCurrentIndex: (index: number) => void
 }
 
+// ─────────────────────────────────────────────────────────────────
+// Pure helper: compute filtered indices from a state snapshot.
+// Used both as a Zustand selector (for components) and inside
+// store actions (via get()). No `get()` calls — pure function.
+// ─────────────────────────────────────────────────────────────────
+export function computeFilteredIndices(
+  activeFilter: FilterType,
+  starredSet: number[],
+  masteredSet: number[],
+  searchQuery: string,
+): number[] {
+  let indices = vocabData.map((_, i) => i)
+
+  if (activeFilter === 'starred') {
+    indices = indices.filter((i) => starredSet.includes(i))
+  } else if (activeFilter === 'memorize') {
+    indices = indices.filter((i) => masteredSet.includes(i))
+  } else if (activeFilter !== 'all') {
+    indices = indices.filter((i) => vocabData[i].cat === activeFilter)
+  }
+
+  if (searchQuery.trim()) {
+    const q = searchQuery.toLowerCase().trim()
+    indices = indices.filter((i) => {
+      const item = vocabData[i]
+      return (
+        item.word.toLowerCase().includes(q) ||
+        item.vi.toLowerCase().includes(q) ||
+        item.example.toLowerCase().includes(q)
+      )
+    })
+  }
+
+  return indices
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Hook: use this in components instead of the old s.getFilteredIndices().
+// Uses shallow equality to avoid infinite re-renders (the selector
+// creates a new array every call — shallow compares elements).
+//
+// Usage: const filtered = useFilteredIndices()
+// ─────────────────────────────────────────────────────────────────
+export function useFilteredIndices(): number[] {
+  return useFlashcardStore(
+    useShallow((state) =>
+      computeFilteredIndices(
+        state.activeFilter,
+        state.starredSet,
+        state.masteredSet,
+        state.searchQuery,
+      ),
+    ),
+  )
+}
+
 export const useFlashcardStore = create<FlashcardState>()(
   persist(
     (set, get) => ({
@@ -42,63 +95,39 @@ export const useFlashcardStore = create<FlashcardState>()(
       searchQuery: '',
       activeMode: 'flashcard',
 
-      getFilteredIndices: () => {
-        const { activeFilter, searchQuery, starredSet, masteredSet } = get()
-        let indices = vocabData.map((_, i) => i)
-
-        // Filter by category
-        if (activeFilter === 'starred') {
-          indices = indices.filter((i) => starredSet.includes(i))
-        } else if (activeFilter === 'memorize') {
-          indices = indices.filter((i) => masteredSet.includes(i))
-        } else if (activeFilter !== 'all') {
-          indices = indices.filter((i) => vocabData[i].cat === activeFilter)
-        }
-
-        // Filter by search
-        if (searchQuery.trim()) {
-          const q = searchQuery.toLowerCase().trim()
-          indices = indices.filter((i) => {
-            const item = vocabData[i]
-            return (
-              item.word.toLowerCase().includes(q) ||
-              item.vi.toLowerCase().includes(q) ||
-              item.example.toLowerCase().includes(q)
-            )
-          })
-        }
-
-        return indices
-      },
-
-      getAllIndices: () => {
-        return vocabData.map((_, i) => i)
-      },
-
       flipCard: () => {
+        const { activeFilter, masteredSet, starredSet, searchQuery } = get()
+        const filtered = computeFilteredIndices(activeFilter, starredSet, masteredSet, searchQuery)
+        if (filtered.length === 0) return
+
         playSound('flip')
         set((s) => ({ isFlipped: !s.isFlipped }))
       },
 
       nextCard: () => {
-        const filtered = get().getFilteredIndices()
+        const { activeFilter, starredSet, masteredSet, searchQuery, currentIndex } = get()
+        const filtered = computeFilteredIndices(activeFilter, starredSet, masteredSet, searchQuery)
         if (filtered.length === 0) return
-        const currentFiltered = filtered.indexOf(get().currentIndex)
-        const nextFiltered =
-          currentFiltered === -1 || currentFiltered >= filtered.length - 1 ? 0 : currentFiltered + 1
+        const currentFiltered = filtered.indexOf(currentIndex ?? -1)
+        if (currentFiltered >= filtered.length - 1) return
+        const nextFiltered = currentFiltered === -1 ? 0 : currentFiltered + 1
         set({ currentIndex: filtered[nextFiltered], isFlipped: false })
       },
 
       prevCard: () => {
-        const filtered = get().getFilteredIndices()
+        const { activeFilter, starredSet, masteredSet, searchQuery, currentIndex } = get()
+        const filtered = computeFilteredIndices(activeFilter, starredSet, masteredSet, searchQuery)
         if (filtered.length === 0) return
-        const currentFiltered = filtered.indexOf(get().currentIndex)
-        const prevFiltered = currentFiltered <= 0 ? filtered.length - 1 : currentFiltered - 1
-        set({ currentIndex: filtered[prevFiltered], isFlipped: false })
+        const currentFiltered = filtered.indexOf(currentIndex ?? -1)
+        if (currentFiltered <= 0) return
+        set({ currentIndex: filtered[currentFiltered - 1], isFlipped: false })
       },
 
       toggleMastered: () => {
-        const { currentIndex, activeFilter, masteredSet, searchQuery } = get()
+        const { currentIndex, activeFilter, masteredSet, starredSet, searchQuery } = get()
+
+        if (currentIndex === undefined || currentIndex < 0) return
+
         const isRemoving = masteredSet.includes(currentIndex)
         const newMasteredSet = isRemoving
           ? masteredSet.filter((i) => i !== currentIndex)
@@ -106,23 +135,15 @@ export const useFlashcardStore = create<FlashcardState>()(
 
         // When removing from the 'memorize' filtered view, navigate to next valid card
         if (isRemoving && activeFilter === 'memorize') {
-          // Compute new filtered list (with item removed)
-          let remaining = newMasteredSet.slice()
-          if (searchQuery.trim()) {
-            const q = searchQuery.toLowerCase().trim()
-            remaining = remaining.filter((i) => {
-              const item = vocabData[i]
-              return (
-                item.word.toLowerCase().includes(q) ||
-                item.vi.toLowerCase().includes(q) ||
-                item.example.toLowerCase().includes(q)
-              )
-            })
-          }
+          const remaining = computeFilteredIndices(
+            'memorize',
+            starredSet,
+            newMasteredSet,
+            searchQuery,
+          )
           const pos = remaining.indexOf(currentIndex)
-          // Pick next, or previous, or -1 if empty
           const nextIndex =
-            remaining.length === 0 ? -1 : (remaining[pos] ?? remaining[pos - 1] ?? remaining[0])
+            remaining.length === 0 ? undefined : (remaining[pos] ?? remaining[pos - 1] ?? remaining[0])
           set({ masteredSet: newMasteredSet, currentIndex: nextIndex, isFlipped: false })
         } else {
           set({ masteredSet: newMasteredSet })
@@ -130,7 +151,9 @@ export const useFlashcardStore = create<FlashcardState>()(
       },
 
       toggleStar: () => {
-        const { currentIndex, activeFilter, starredSet, searchQuery } = get()
+        const { currentIndex, activeFilter, starredSet, masteredSet, searchQuery } = get()
+        if (currentIndex === undefined) return
+
         const isRemoving = starredSet.includes(currentIndex)
         const newStarredSet = isRemoving
           ? starredSet.filter((i) => i !== currentIndex)
@@ -138,23 +161,15 @@ export const useFlashcardStore = create<FlashcardState>()(
 
         // When removing from the 'starred' filtered view, navigate to next valid card
         if (isRemoving && activeFilter === 'starred') {
-          // Compute new filtered list (with item removed)
-          let remaining = newStarredSet.slice()
-          if (searchQuery.trim()) {
-            const q = searchQuery.toLowerCase().trim()
-            remaining = remaining.filter((i) => {
-              const item = vocabData[i]
-              return (
-                item.word.toLowerCase().includes(q) ||
-                item.vi.toLowerCase().includes(q) ||
-                item.example.toLowerCase().includes(q)
-              )
-            })
-          }
+          const remaining = computeFilteredIndices(
+            'starred',
+            newStarredSet,
+            masteredSet,
+            searchQuery,
+          )
           const pos = remaining.indexOf(currentIndex)
-          // Pick next, or previous, or -1 if empty
           const nextIndex =
-            remaining.length === 0 ? -1 : (remaining[pos] ?? remaining[pos - 1] ?? remaining[0])
+            remaining.length === 0 ? undefined : (remaining[pos] ?? remaining[pos - 1] ?? remaining[0])
           set({ starredSet: newStarredSet, currentIndex: nextIndex, isFlipped: false })
         } else {
           set({ starredSet: newStarredSet })
@@ -163,55 +178,13 @@ export const useFlashcardStore = create<FlashcardState>()(
 
       setFilter: (filter) => {
         const { searchQuery, starredSet, masteredSet } = get()
-        // Compute filtered indices with the NEW filter
-        let indices = vocabData.map((_, i) => i)
-        if (filter === 'starred') {
-          indices = indices.filter((i) => starredSet.includes(i))
-        } else if (filter === 'memorize') {
-          indices = indices.filter((i) => masteredSet.includes(i))
-        } else if (filter !== 'all') {
-          indices = indices.filter((i) => vocabData[i].cat === filter)
-        }
-        if (searchQuery.trim()) {
-          const q = searchQuery.toLowerCase().trim()
-          indices = indices.filter((i) => {
-            const item = vocabData[i]
-            return (
-              item.word.toLowerCase().includes(q) ||
-              item.vi.toLowerCase().includes(q) ||
-              item.example.toLowerCase().includes(q)
-            )
-          })
-        }
-        set({ activeFilter: filter, currentIndex: indices[0] ?? 0, isFlipped: false })
+        const indices = computeFilteredIndices(filter, starredSet, masteredSet, searchQuery)
+        set({ activeFilter: filter, currentIndex: indices[0], isFlipped: false })
       },
 
       setSearch: (query) => {
         const { activeFilter, starredSet, masteredSet } = get()
-        let indices = vocabData.map((_, i) => i)
-
-        // Mirror the same filter logic as getFilteredIndices
-        if (activeFilter === 'starred') {
-          indices = indices.filter((i) => starredSet.includes(i))
-        } else if (activeFilter === 'memorize') {
-          indices = indices.filter((i) => masteredSet.includes(i))
-        } else if (activeFilter !== 'all') {
-          indices = indices.filter((i) => vocabData[i].cat === activeFilter)
-        }
-
-        if (query.trim()) {
-          const q = query.toLowerCase().trim()
-          indices = indices.filter((i) => {
-            const item = vocabData[i]
-            return (
-              item.word.toLowerCase().includes(q) ||
-              item.vi.toLowerCase().includes(q) ||
-              item.example.toLowerCase().includes(q)
-            )
-          })
-        }
-
-        // Always jump to first card of the resulting filtered set
+        const indices = computeFilteredIndices(activeFilter, starredSet, masteredSet, query)
         set({ searchQuery: query, currentIndex: indices[0] ?? 0, isFlipped: false })
       },
 

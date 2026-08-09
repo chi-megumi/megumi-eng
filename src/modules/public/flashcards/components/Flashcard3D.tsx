@@ -1,4 +1,5 @@
 import { useFlashcardStore } from '../stores/useFlashcardStore'
+import { useFilteredIndices } from '../stores/useFlashcardStore'
 import { vocabData, categoryBadgeLabels } from '../data/vocabData'
 import { useSpeech } from '../hooks/useSpeech'
 
@@ -9,15 +10,16 @@ export function Flashcard3D() {
   const flipCard = useFlashcardStore((s) => s.flipCard)
   const starredSet = useFlashcardStore((s) => s.starredSet)
   const toggleStar = useFlashcardStore((s) => s.toggleStar)
-  const getFilteredIndices = useFlashcardStore((s) => s.getFilteredIndices)
+  // Subscribe to filtered result with shallow equality — no tearing, no infinite loop
+  const filtered = useFilteredIndices()
 
   const { speak, isSpeaking } = useSpeech()
 
-  const filtered = getFilteredIndices()
   const isEmpty = filtered.length === 0
 
-  const item = isEmpty ? null : vocabData[currentIndex]
-  const isStarred = !isEmpty && starredSet.includes(currentIndex)
+  const safeIndex = currentIndex ?? 0
+  const item = isEmpty ? null : vocabData[safeIndex]
+  const isStarred = !isEmpty && starredSet.includes(safeIndex)
 
   const handleSpeak = (e: React.MouseEvent) => {
     e.stopPropagation()

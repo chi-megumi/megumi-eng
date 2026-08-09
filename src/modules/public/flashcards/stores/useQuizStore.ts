@@ -15,16 +15,16 @@ export interface QuizOption {
 
 /** Per-question answer record stored in history */
 export interface QuizAnswerRecord {
-  wordIndex: number       // which vocab item was asked
-  correct: boolean        // did the user answer correctly?
+  wordIndex: number // which vocab item was asked
+  correct: boolean // did the user answer correctly?
   selectedWordIndex: number // which vocab item the user chose
 }
 
 export interface QuizHistoryEntry {
   id: string
-  date: string            // ISO string
+  date: string // ISO string
   durationMs: number
-  score: number           // 0–100
+  score: number // 0–100
   correct: number
   total: number
   mode: QuizMode
@@ -43,16 +43,16 @@ interface QuizState {
   correctOptionIndex: number
 
   // Scored mode
-  sessionQueue: number[]      // remaining word indices for this round
+  sessionQueue: number[] // remaining word indices for this round
   sessionTotal: number
   sessionCorrect: number
   sessionStartMs: number
   sessionDone: boolean
-  sessionAnswers: QuizAnswerRecord[]  // accumulates during session
+  sessionAnswers: QuizAnswerRecord[] // accumulates during session
 
   // Endless mode anti-repeat
   recentIndices: number[]
-  recentDistractorIndices: number[]  // last N distractor words, for anti-repeat
+  recentDistractorIndices: number[] // last N distractor words, for anti-repeat
 
   // Streak (both modes)
   streak: number
@@ -114,7 +114,7 @@ function buildOptions(
 ): {
   options: QuizOption[]
   correctOptionIndex: number
-  usedDistractors: number[]   // indices of distractors chosen (for tracking)
+  usedDistractors: number[] // indices of distractors chosen (for tracking)
 } {
   const correctWord = vocabData[wordIndex]
   const source = pool.length >= 4 ? pool : vocabData.map((_, i) => i)
@@ -124,7 +124,7 @@ function buildOptions(
   // Pick 3 distractors with anti-repeat weighting
   while (usedDistractors.length < 3) {
     const d = pickWeightedDistractor(source, exclude, [...recentDistractors, ...usedDistractors])
-    if (d === null) break   // source exhausted
+    if (d === null) break // source exhausted
     exclude.add(d)
     usedDistractors.push(d)
   }
@@ -257,7 +257,7 @@ export const useQuizStore = create<QuizState>()(
 
         if (scoredDone) {
           const durationMs = Date.now() - state.sessionStartMs
-          const score = Math.round((newCorrect / state.sessionTotal) * 100)
+          const score = Math.round((newCorrect / state.sessionTotal) * 10)
           const entry: QuizHistoryEntry = {
             id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
             date: new Date().toISOString(),
@@ -294,13 +294,17 @@ export const useQuizStore = create<QuizState>()(
         const state = get()
         const pool = defaultPool()
         const recentDist = state.recentDistractorIndices
-        const DIST_WINDOW = 12  // remember last 12 distractor words
+        const DIST_WINDOW = 12 // remember last 12 distractor words
 
         if (state.quizMode === 'scored') {
           if (state.sessionQueue.length === 0) return
           const queue = [...state.sessionQueue]
           const nextIdx = queue.pop()!
-          const { options, correctOptionIndex, usedDistractors } = buildOptions(nextIdx, pool, recentDist)
+          const { options, correctOptionIndex, usedDistractors } = buildOptions(
+            nextIdx,
+            pool,
+            recentDist,
+          )
           set({
             sessionQueue: queue,
             currentWordIndex: nextIdx,
@@ -313,7 +317,11 @@ export const useQuizStore = create<QuizState>()(
         } else {
           const recent = state.recentIndices
           const nextIdx = pickWeightedRandom(pool, recent)
-          const { options, correctOptionIndex, usedDistractors } = buildOptions(nextIdx, pool, recentDist)
+          const { options, correctOptionIndex, usedDistractors } = buildOptions(
+            nextIdx,
+            pool,
+            recentDist,
+          )
           const newRecent = [...recent, nextIdx].slice(-RECENT_WINDOW)
           set({
             currentWordIndex: nextIdx,

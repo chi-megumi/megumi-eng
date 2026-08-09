@@ -12,7 +12,7 @@ import { useSpeech } from './hooks/useSpeech'
 import { vocabData } from './data/vocabData'
 import './FlashcardsPage.scss'
 
-export function FlashcardsPage() {
+const FlashcardsPage = () => {
   const activeMode = useFlashcardStore((s) => s.activeMode)
   const flipCard = useFlashcardStore((s) => s.flipCard)
   const nextCard = useFlashcardStore((s) => s.nextCard)
@@ -46,6 +46,7 @@ export function FlashcardsPage() {
           break
         case 'KeyS':
           e.preventDefault()
+          if (currentIndex === null) return
           speak(vocabData[currentIndex]?.word ?? '')
           break
         case 'KeyM':
@@ -81,3 +82,5 @@ export function FlashcardsPage() {
     </div>
   )
 }
+
+export default FlashcardsPage
