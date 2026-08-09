@@ -1,3 +1,5 @@
+import { vocabData } from '~/modules/public/flashcards/data/vocabData'
+
 export function Header() {
   return (
     <header className="fc-header">
@@ -10,8 +12,8 @@ export function Header() {
         <span>✨</span>
       </h1>
       <p className="subtitle">
-        Bộ 52 thẻ từ vựng sống động kèm phát âm, ví dụ &amp; mini game vui nhộn!
+        Bộ {vocabData.length} thẻ từ vựng sống động kèm phát âm, ví dụ &amp; mini game vui nhộn!
       </p>
     </header>
-  );
+  )
 }
