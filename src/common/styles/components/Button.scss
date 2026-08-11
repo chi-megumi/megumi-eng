@@ -137,6 +137,18 @@
       transform: translateY(-2px);
     }
   }
+
+  /* Link — transparent */
+  &--link {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    color: var(--primary);
+    padding: 0;
+    &:hover:not(:disabled) {
+      text-decoration: underline;
+    }
+  }
 }
 
 @keyframes pulse-icon {

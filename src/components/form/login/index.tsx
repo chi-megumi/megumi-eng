@@ -3,40 +3,52 @@ import InputControl from '~/components/form/input/InputControler'
 import { useForm } from 'react-hook-form'
 import { Button } from '~/components/button/Button'
 import useAuthStore from '~/common/stores/authStore'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { loginSchema } from '~/common/schemas'
 
 const LoginForm = () => {
   const showRegister = useAuthStore((s) => s.showRegister)
+  const showForgotPassword = useAuthStore((s) => s.showForgotPassword)
 
   const {
     control,
     formState: { errors },
+    handleSubmit,
   } = useForm({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   })
+  const onSubmit = (_) => {}
 
   return (
-    <form className="flex flex-col gap-16">
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-4">
-        <FormItem label="Email">
+        <FormItem label="Email" isRequired>
           <InputControl
             name="email"
             control={control}
-            label="Email"
             error={errors.email?.message}
+            placeholder="Nhập email của bạn"
           />
         </FormItem>
 
-        <FormItem label="Password">
+        <FormItem label="Mật khẩu" isRequired>
           <InputControl
             name="password"
             control={control}
-            label="Password"
             error={errors.password?.message}
+            placeholder="Nhập mật khẩu của bạn"
           />
         </FormItem>
+      </div>
+
+      <div className="flex items-center justify-end">
+        <Button type="button" variant="link" size="sm" onClick={showForgotPassword}>
+          Quên mật khẩu?
+        </Button>
       </div>
 
       <Button type="submit" variant="primary" size="md" fullWidth>
@@ -45,13 +57,9 @@ const LoginForm = () => {
 
       <div className="text-center text-sm text-gray-600">
         Chưa có tài khoản?{' '}
-        <button
-          type="button"
-          onClick={showRegister}
-          className="text-primary hover:underline font-medium"
-        >
+        <Button type="button" variant="link" size="md" onClick={showRegister}>
           Đăng ký ngay
-        </button>
+        </Button>
       </div>
     </form>
   )

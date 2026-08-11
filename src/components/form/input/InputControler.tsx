@@ -1,7 +1,8 @@
+import type { InputHTMLAttributes } from 'react'
 import { Controller, type Control, type FieldValues, type Path } from 'react-hook-form'
 import InputBase from '~/components/form/input/InputBase'
 
-interface InputProps<T extends FieldValues> {
+interface InputProps<T extends FieldValues> extends InputHTMLAttributes<HTMLInputElement> {
   name: Path<T>
   control: Control<T>
   label?: string

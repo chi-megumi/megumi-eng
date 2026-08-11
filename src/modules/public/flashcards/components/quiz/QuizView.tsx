@@ -9,8 +9,10 @@ import HistoryDetailModal from '~/modules/public/flashcards/components/quiz/Hist
 import ModeSelector from '~/modules/public/flashcards/components/quiz/ModeSelector'
 import HistoryPanel from '~/modules/public/flashcards/components/quiz/HistoryPanel'
 import ScoredSummary from '~/modules/public/flashcards/components/quiz/ScoreSummary'
+import { useFlashcardStore } from '~/modules/public/flashcards/stores/useFlashcardStore'
 
 export function QuizView() {
+  const activeMode = useFlashcardStore((s) => s.activeMode)
   const quizMode = useQuizStore((s) => s.quizMode)
   const currentWordIndex = useQuizStore((s) => s.currentWordIndex)
   const options = useQuizStore((s) => s.options)
@@ -44,6 +46,8 @@ export function QuizView() {
   }
 
   const handleOptionClick = (idx: number) => {
+    console.log('handleOptionClick', idx)
+
     if (answered) return
     const isCorrect = submitAnswer(idx)
     if (isCorrect) {
@@ -65,6 +69,42 @@ export function QuizView() {
     quizMode === 'scored' && sessionTotal > 0
       ? Math.round(((sessionTotal - sessionQueue.length) / sessionTotal) * 100)
       : 0
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return
+      }
+
+      if (activeMode !== 'quiz') return
+      switch (e.code) {
+        case 'KeyA':
+          e.preventDefault()
+          handleOptionClick(0)
+          break
+        case 'KeyB':
+          e.preventDefault()
+          handleOptionClick(1)
+          break
+        case 'KeyC':
+          e.preventDefault()
+          handleOptionClick(2)
+          break
+        case 'KeyD':
+          e.preventDefault()
+          handleOptionClick(3)
+          break
+        case 'ArrowRight':
+          e.preventDefault()
+          nextQuestion()
+          break
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [nextQuestion, activeMode])
 
   if (!currentWord && !sessionDone) return null
 
