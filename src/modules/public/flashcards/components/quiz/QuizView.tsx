@@ -46,8 +46,6 @@ export function QuizView() {
   }
 
   const handleOptionClick = (idx: number) => {
-    console.log('handleOptionClick', idx)
-
     if (answered) return
     const isCorrect = submitAnswer(idx)
     if (isCorrect) {

@@ -1,7 +1,6 @@
 import { Button } from '~/components/button/Button'
 import '~/common/styles/components/Sidebar.scss'
 import { useState } from 'react'
-import Tabs from '~/components/tabs'
 import MenuTabs from '~/components/menu/MenuTabs'
 
 const SideBar = () => {
