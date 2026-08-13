@@ -1,6 +1,8 @@
 import { Button } from '~/components/button/Button'
 import '~/common/styles/components/Sidebar.scss'
 import { useState } from 'react'
+import Tabs from '~/components/tabs'
+import MenuTabs from '~/components/menu/MenuTabs'
 
 const SideBar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -39,7 +41,9 @@ const SideBar = () => {
             .filter(Boolean)
             .join(' ')}
         >
-          <div></div>
+          <div>
+            <MenuTabs />
+          </div>
 
           <div className="mt-auto">
             <Button variant="primary" size="sm" onClick={onLogout} fullWidth>
