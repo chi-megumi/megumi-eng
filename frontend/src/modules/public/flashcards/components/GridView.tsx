@@ -1,6 +1,5 @@
 import { vocabData } from '../data/vocabData'
 
-
 export function GridView() {
   // Grid always shows all vocab cards regardless of filter
   const filtered = vocabData.map((_, i) => i)

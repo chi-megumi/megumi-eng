@@ -1,8 +1,4 @@
-import {
-  useEffect,
-  type ReactNode,
-  type CSSProperties,
-} from 'react'
+import { useEffect, type ReactNode, type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
 import './Modal.scss'
 
@@ -65,7 +61,9 @@ export function Modal({
   useEffect(() => {
     if (!open) return
     document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = '' }
+    return () => {
+      document.body.style.overflow = ''
+    }
   }, [open])
 
   if (!open) return null
@@ -88,11 +86,7 @@ export function Modal({
             <div className="modal__title">{title}</div>
             <div className="modal__header-extra">
               {headerExtra}
-              <button
-                className="modal__close-btn"
-                onClick={onClose}
-                aria-label="Đóng"
-              >
+              <button className="modal__close-btn" onClick={onClose} aria-label="Đóng">
                 ✕
               </button>
             </div>
