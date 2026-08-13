@@ -133,6 +133,12 @@ export const useFlashcardStore = create<FlashcardState>()(
           ? masteredSet.filter((i) => i !== currentIndex)
           : [...masteredSet, currentIndex]
 
+        if (isRemoving) {
+          playSound('incorrect')
+        } else {
+          playSound('correct')
+        }
+
         // When removing from the 'memorize' filtered view, navigate to next valid card
         if (isRemoving && activeFilter === 'memorize') {
           const remaining = computeFilteredIndices(
@@ -143,7 +149,9 @@ export const useFlashcardStore = create<FlashcardState>()(
           )
           const pos = remaining.indexOf(currentIndex)
           const nextIndex =
-            remaining.length === 0 ? undefined : (remaining[pos] ?? remaining[pos - 1] ?? remaining[0])
+            remaining.length === 0
+              ? undefined
+              : (remaining[pos] ?? remaining[pos - 1] ?? remaining[0])
           set({ masteredSet: newMasteredSet, currentIndex: nextIndex, isFlipped: false })
         } else {
           set({ masteredSet: newMasteredSet })
@@ -169,7 +177,9 @@ export const useFlashcardStore = create<FlashcardState>()(
           )
           const pos = remaining.indexOf(currentIndex)
           const nextIndex =
-            remaining.length === 0 ? undefined : (remaining[pos] ?? remaining[pos - 1] ?? remaining[0])
+            remaining.length === 0
+              ? undefined
+              : (remaining[pos] ?? remaining[pos - 1] ?? remaining[0])
           set({ starredSet: newStarredSet, currentIndex: nextIndex, isFlipped: false })
         } else {
           set({ starredSet: newStarredSet })

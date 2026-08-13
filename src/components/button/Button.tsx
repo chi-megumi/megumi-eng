@@ -1,7 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import './Button.scss'
-
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'icon' | 'danger'
+import '~/common/styles/components/Button.scss'
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'icon' | 'danger' | 'link'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -9,6 +8,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: ButtonSize
   children: ReactNode
   fullWidth?: boolean
+  type?: 'button' | 'submit' | 'reset'
 }
 
 export function Button({
@@ -17,19 +17,15 @@ export function Button({
   fullWidth = false,
   className = '',
   children,
+  type = 'button',
   ...rest
 }: ButtonProps) {
   return (
     <button
-      className={[
-        'btn',
-        `btn--${variant}`,
-        `btn--${size}`,
-        fullWidth ? 'btn--full' : '',
-        className,
-      ]
+      className={['btn', `btn--${variant}`, `btn--${size}`, fullWidth ? 'btn--full' : '', className]
         .filter(Boolean)
         .join(' ')}
+      type={type}
       {...rest}
     >
       {children}

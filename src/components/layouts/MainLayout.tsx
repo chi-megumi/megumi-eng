@@ -1,17 +1,18 @@
-// import SideBar from '~/components/menu/Sidebar'
-// import AppHeader from '~/components/header/AppHeader'
+import AppHeader from '~/components/header/AppHeader'
 import { Outlet } from 'react-router-dom'
+import SideBar from '~/components/menu/Sidebar'
+import '~/common/styles/components/MainLayout.scss'
 
 const MainLayout = () => {
   return (
-    <div className="flex justify-center gap-3">
-      {/* <div className="w-62.5 fixed top-1/2 -translate-y-1/2 left-4">
-        <SideBar />
-      </div> */}
+    <div className="main-layout flex justify-center gap-3">
+      <SideBar />
 
-      <div className="w-225 overflow-hidden">
-        {/* <AppHeader /> */}
+      <div className="main-content-wrapper min-w-0 w-225">
+        <AppHeader />
         <Outlet />
+
+        <div className="">🌸 Lớp học cô Chuy 🌸</div>
       </div>
     </div>
   )
