@@ -21,7 +21,7 @@ const LoginForm = () => {
       password: '',
     },
   })
-  const onSubmit = (_) => {}
+  const onSubmit = () => {}
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>

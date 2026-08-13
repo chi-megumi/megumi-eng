@@ -30,10 +30,11 @@ const MOCK_DATA = [
 const MenuTabs = () => {
   const [activeSidebar, setActiveSidebar] = useState('class')
 
-  const [expandedClasses, setExpandedClasses] = useState({})
+  const [expandedClasses, setExpandedClasses] = useState<Record<string, boolean>>({})
 
-  const toggleClass = (classId) => {
+  const toggleClass = (classId: string) => {
     setExpandedClasses((prev) => ({
+      ...prev,
       [classId]: !prev[classId],
     }))
   }

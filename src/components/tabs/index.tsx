@@ -30,7 +30,7 @@ const Tabs = ({ active, onChange, tabs, classNames }: TabsProps) => {
           onClick={() => onChange(tab.value)}
           className={[
             'bg-transparent rounded-full font-bold flex-1 py-2 px-4 cursor-pointer text-primary text-xs',
-            classNames.button,
+            classNames?.button,
             active === tab.value ? 'bg-white shadow-md text-(--primary)' : '',
           ]
             .filter(Boolean)
