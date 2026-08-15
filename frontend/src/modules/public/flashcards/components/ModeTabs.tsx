@@ -1,14 +1,14 @@
-import { useFlashcardStore, type AppMode } from '../stores/useFlashcardStore';
+import { useFlashcardStore, type AppMode } from '../stores/useFlashcardStore'
 
 const tabs: { mode: AppMode; icon: string; label: string }[] = [
   { mode: 'flashcard', icon: '🃏', label: 'Lật Thẻ (3D)' },
   { mode: 'quiz', icon: '🎮', label: 'Đố Vui (Quiz)' },
   { mode: 'grid', icon: '📋', label: 'Danh Sách / In Thẻ' },
-];
+]
 
 export function ModeTabs() {
-  const activeMode = useFlashcardStore((s) => s.activeMode);
-  const setMode = useFlashcardStore((s) => s.setMode);
+  const activeMode = useFlashcardStore((s) => s.activeMode)
+  const setMode = useFlashcardStore((s) => s.setMode)
 
   return (
     <div className="mode-tabs">
@@ -22,5 +22,5 @@ export function ModeTabs() {
         </button>
       ))}
     </div>
-  );
+  )
 }
